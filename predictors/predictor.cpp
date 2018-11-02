@@ -54,8 +54,8 @@ void PredictorImpl<T>::PrintStatistics(std::ostream *out) const {
   for (int i = 0; i < 2; ++i) {
     if (max_mispredicted_[i]) {
         *out << "  0x" << std::hex << max_mispredicted_[i] << std::dec <<
-            " (" << mispredicted_count_.at(max_mispredicted_[i]) <<
-            " times): " << *mispredicted_instrs_.at(max_mispredicted_[i]) <<
+           // " (" << mispredicted_count_.at(max_mispredicted_[i]) <<
+          //  " times): " << *mispredicted_instrs_.at(max_mispredicted_[i]) <<
             endl;
     }
   }

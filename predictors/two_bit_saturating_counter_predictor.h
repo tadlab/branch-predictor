@@ -26,9 +26,8 @@ class TwoBitSaturatingCounterPredictor : public PredictorImpl<TwoBitState> {
  public:
   TwoBitSaturatingCounterPredictor();
   string get_name() const override {
-    int budget = kSize * 2;
-    return "Two-bit saturating counter branch predictor (" +
-        std::to_string(budget) + " b)";
+    //int budget = kSize * 2;
+    return "Two-bit saturating counter branch predictor (";
   }
 
  private:

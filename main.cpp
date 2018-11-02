@@ -27,8 +27,26 @@
 ostream *out = &cerr;
 // Contains all the predictors that should be used when instrumentating a
 // program with this Pin tool.
-vector<bp::Predictor*> bps =
-  {new bp::TwoBitSaturatingCounterPredictor(), new bp::PerceptronPredictor()};
+std::vector<int> xs (3,100);
+
+std::vector<bp::Predictor*> bps;
+void PopulateVector(){
+  //std::vector<bp::Predictor*>::iterator it;
+  //it = xs.begin();
+  //xs.insert(it, 10);
+  //cout << "size: " + xs.size();
+  
+  bp::TwoBitSaturatingCounterPredictor *a=new bp::TwoBitSaturatingCounterPredictor();// = new bp::TwoBitSaturatingCounterPredictor();
+  bp::PerceptronPredictor *b = new bp::PerceptronPredictor();// = new bp::PerceptronPredictor();
+  //it = bps.begin();
+  //bps.insert(it, a);
+  //bps.insert(it, b);
+  bps.push_back(a);
+  bps.push_back(b);
+}
+
+
+ // {new bp::TwoBitSaturatingCounterPredictor(), new bp::PerceptronPredictor()};
 
 // Runs the branch at the given address through each of the branch predictors
 // with whether the branch was taken and its instruction mnemonic.
@@ -44,6 +62,7 @@ void ProcessBranch(ADDRINT pc, bool brTaken, void *arg) {
 void InstrumentInstruction(INS ins, void *v) {
   if (INS_IsBranch(ins) && INS_HasFallThrough(ins)) {
     string *mnemonic = new string(INS_Mnemonic(ins));
+    cout << "mnemonic: " << mnemonic << " value: " << *mnemonic << endl;
     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR) ProcessBranch,
         IARG_INST_PTR, IARG_BRANCH_TAKEN, IARG_PTR, mnemonic, IARG_END);
   }
@@ -59,12 +78,16 @@ void Finished(int code, void *v) {
 }
 
 int main(int argc, char *argv[]) {
+  cout << argc << endl;
+  cout << *argv << endl;
   PIN_Init(argc, argv);
   INS_AddInstrumentFunction(InstrumentInstruction, 0);
   PIN_AddFiniFunction(Finished, 0);
+  PopulateVector();
 
   *out << "Running with the following branch predictor(s):" << endl;
   for (bp::Predictor *bp : bps) {
+    *out << "in the loop";
     *out << "  " << bp->get_name() << endl;
     // Due to the way Pin manages memory, we don't explicitly delete the branch
     // predictors here. For this reason, we also do not use unique_ptr in our
